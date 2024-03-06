@@ -3,8 +3,39 @@
 The implemntation for Normalizer and DTW are handled independently.  
 Once we complete the implementations for Normalizer & DTW, both will be added to the main file `starter.cu`.
 
-## Normalizer Kernal
-*ToDo*
+## Normalizer Kernel
+The normalizer kernel runs in two passes:
+
+1. The first pass will calculate the sum of all elements in the input query, as well as the sum of all squared elements in the input query. 
+  The result of this first pass is coalesced on the host and the final sigma (variance) and mu (mean) values are copied to constant memory
+  on the device. This pass uses a list reduction algorithm for adding the numbers together.
+2. The second pass will then use the mean and variance to normalize the input query data. This pass will simply process some N number of
+  values of the input query per thread and write them to the normalized output buffer.
+
+The data to normalize is generated / randomized and stored in `test-normalizer/<unix-date>/query.raw` at the beginning of the run. 
+The normalized output is stored in `normalized_query.raw` in the same directory.
+
+To build the normalizer, run: 
+```sh
+# remove the previously-built libwb because of changes made to libwb. 
+# this is only required the first time you build the normalizer.
+rm -rf libwb/build 
+
+./build normalizer.cu normalizer
+```
+To run it, simply run
+```
+./normalizer
+```
+The output should look something like:
+
+```
+[student08@login1 final-project-sdtw]$ ./normalizer
+mu: 89.7635, sigma: 0.0517475
+normalized 2000 values
+```
+
+
 ## DTW Kernal
 The DTW kernal is created independently in the `dtw.cu` file and also created a dedicated test(`test-dtw`) and test runner(`run_tests_devel_dtw`) for it.
 ### Testing the DTW kernal independently

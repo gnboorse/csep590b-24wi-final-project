@@ -1,4 +1,5 @@
 #include "wb.h"
+#include <stdlib.h>
 
 template <typename T>
 static inline T _min(const T &x, const T &y) {
@@ -13,6 +14,11 @@ static inline T _max(const T &x, const T &y) {
 template <typename T>
 inline T lerp(const double &x, const T &start, const T &end) {
   return (1 - x) * start + x * end;
+}
+
+inline float true_random(const double &x, const double &start, const double &end) {
+  // generate random numbers with 3 decimal points of precision
+  return (rand() % ((int)(end - start + 1) * 1000)) / 1000.0f + start;
 }
 
 static inline void genRandom(void *trgt, wbType_t type, double minVal,
@@ -34,7 +40,7 @@ static inline void genRandom(void *trgt, wbType_t type, double minVal,
       *((int *)trgt) = lerp<int>(rf, minVal, maxVal);
       break;
     case wbType_float: {
-      *((float *)trgt) = lerp<float>(rf, minVal, maxVal);
+      *((float *)trgt) = true_random(rf, minVal, maxVal);
       break;
     }
     case wbType_double: {
