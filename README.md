@@ -31,7 +31,7 @@ The output should look something like:
 
 ```
 [student08@login1 final-project-sdtw]$ ./normalizer
-mu: 89.7635, sigma: 0.0517475
+mu: 89.956, sigma: 19.6125
 normalized 2000 values
 ```
 

@@ -179,7 +179,7 @@ int main(int argc, char **argv) {
      // Faster to multiply by this factor than to compute lots of division on the GPU
     variance  = variance > 0 ? 1.0/std::sqrt(variance) : 1;
 
-    wbLog(TRACE, "mu: ", mean, ", sigma: ", variance);
+    wbLog(TRACE, "mu: ", mean, ", sigma: ", 1 / variance);
 
     // copy reduced sums to constant memory on the device
     wbCheck(hipMemcpyToSymbol(mean_X, &mean, sizeof(float), 0, hipMemcpyHostToDevice));
