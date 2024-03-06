@@ -18,7 +18,7 @@ inline T lerp(const double &x, const T &start, const T &end) {
 
 inline float true_random(const double &x, const double &start, const double &end) {
   // generate random numbers with 3 decimal points of precision
-  return (rand() % ((int)(end - start + 1) * 1000)) / 1000.0f + start;
+  return (rand() % ((int)(end - start) * 1000)) / 1000.0f + start;
 }
 
 static inline void genRandom(void *trgt, wbType_t type, double minVal,
