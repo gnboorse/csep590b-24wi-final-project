@@ -1,0 +1,51 @@
+Running the project 12 times...
+Libwb library build done
+Successfully built project_build
+Run - 1
+Normalizer speed: 0.266
+DTW speed: 72.345
+Time taken for run - 1 in seconds - 73
+Run - 2
+Normalizer speed: 0.264
+DTW speed: 72.253
+Time taken for run - 2 in seconds - 72
+Run - 3
+Normalizer speed: 0.264
+DTW speed: 72.204
+Time taken for run - 3 in seconds - 73
+Run - 4
+Normalizer speed: 0.271
+DTW speed: 72.187
+Time taken for run - 4 in seconds - 73
+Run - 5
+Normalizer speed: 0.258
+DTW speed: 72.325
+Time taken for run - 5 in seconds - 73
+Run - 6
+Normalizer speed: 0.262
+DTW speed: 72.296
+Time taken for run - 6 in seconds - 72
+Run - 7
+Normalizer speed: 0.265
+DTW speed: 72.294
+Time taken for run - 7 in seconds - 73
+Run - 8
+Normalizer speed: 0.265
+DTW speed: 72.28
+Time taken for run - 8 in seconds - 73
+Run - 9
+Normalizer speed: 0.267
+DTW speed: 72.254
+Time taken for run - 9 in seconds - 73
+Run - 10
+Normalizer speed: 0.264
+DTW speed: 72.328
+Time taken for run - 10 in seconds - 73
+Run - 11
+Normalizer speed: 0.275
+DTW speed: 72.254
+Time taken for run - 11 in seconds - 72
+Run - 12
+Normalizer speed: 0.291
+DTW speed: 72.186
+Time taken for run - 12 in seconds - 73

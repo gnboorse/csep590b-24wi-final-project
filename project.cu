@@ -138,11 +138,11 @@ int main(int argc, char **argv) {
     // import the query file
     int queryLength, numQuerys;
     hostBatchNormalizerInput = (float *)wbImport(wbPath_join(wbDirectory_current(), "query-string", "query.raw"), &numQuerys, &queryLength);
-    wbLog(TRACE, "Number of Queries : ", numQuerys, " Size of each Query : ", queryLength);
+    // wbLog(TRACE, "Number of Queries : ", numQuerys, " Size of each Query : ", queryLength);
     // import the reference file file
     int referenceLength;
     hostReference = (float *)wbImport(wbPath_join(wbDirectory_current(), "reference-string", "normalized-reference-string.raw"), &referenceLength);
-    wbLog(TRACE, "Reference string length : ", referenceLength);
+    // wbLog(TRACE, "Reference string length : ", referenceLength);
      
     int numBlockSums = queryLength / (BLOCK_SIZE << 1);
     if (queryLength % (BLOCK_SIZE << 1)) {
@@ -170,6 +170,7 @@ int main(int argc, char **argv) {
     wbTime_stop(GPU, "Allocating GPU memory.");
 
     //--Start processing each query for normalizing
+    wbTimerNode_t normalizerTime = wbTime_start(GPU, "Normalizer");
     for(int currentQuery = 0; currentQuery < numQuerys; currentQuery++) {
         for(int i = 0; i < queryLength; i++) {
             hostNormalizedQuery[i] = hostBatchNormalizerInput[(currentQuery * queryLength) +i];
@@ -240,6 +241,7 @@ int main(int argc, char **argv) {
             hostBatchNormalizedQuery[(currentQuery * queryLength) + i] = hostNormalizerOutput[i];
         }
     }
+    wbTime_stop(GPU, "Normalizer");
     
     //Freeing up the device memory used for normalization.
     hipFree(deviceNormalizerInput);
@@ -265,6 +267,7 @@ int main(int argc, char **argv) {
     dim3 dtw_threads(blockSize,blockSize,1);
     dim3 dtw_blocks((DTWColumns+blockSize-1)/blockSize, (DTWRows+blockSize-1)/blockSize, 1);
 
+    wbTimerNode_t dtwTime = wbTime_start(GPU, "DTW_Algo");
     for(int currentQuery = 0; currentQuery < numQuerys; currentQuery++) {
       for(int i = 0; i < queryLength; i++) {
         hostNormalizedQuery[i] = hostBatchNormalizedQuery[(currentQuery * queryLength) +i];
@@ -287,11 +290,18 @@ int main(int argc, char **argv) {
       hipMemcpy(hostDTW, deviceDTW, DTWRows * DTWColumns * sizeof(float), hipMemcpyDeviceToHost);
       wbTime_stop(Copy, "Copying output memory to the CPU");
     }
+    wbTime_stop(GPU, "DTW_Algo");
 
     // write output to raw file
     //wbExport(wbPath_join(wbDirectory_current(), "query-string", "normalized_query.raw"), (wbReal_t *)hostBatchNormalizedQuery, numQuerys, queryLength);
     // Free device memory
     
+    // convert from nanoseconds and round to 3 decimal places
+    float elapsedNormalizerSeconds = round( wbTimerNode_getElapsedTime(normalizerTime) / 1000000000.0f * pow(10, 3)) / pow(10, 3);
+    float elapsedDTWSeconds = round( wbTimerNode_getElapsedTime(dtwTime) / 1000000000.0f * pow(10, 3)) / pow(10, 3);
+    wbLog(TRACE, "Normalizer speed: ", elapsedNormalizerSeconds);
+    wbLog(TRACE, "DTW speed: ", elapsedDTWSeconds);
+
     hipFree(deviceQuery);
     hipFree(deviceReference);
     hipFree(deviceDTW);
