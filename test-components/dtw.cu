@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
   wbTime_start(Generic, "Importing data and creating memory on host");
   hostQuery = (float *)wbImport(wbArg_getInputFile(args, 0), &queryLength);
   hostReference = (float *)wbImport(wbArg_getInputFile(args, 1), &referenceLength);
+  
   DTWRows = queryLength;
   DTWColumns = referenceLength;
   //@@ Allocate the hostDTW matrix

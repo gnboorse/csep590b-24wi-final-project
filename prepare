@@ -19,4 +19,8 @@
 # fi
 
 export LD_LIBRARY_PATH=$PWD/libwb/build/:$LD_LIBRARY_PATH
-./$1
+rm -r query-string/
+rm -r reference-string/
+./build prep.cu gen-query-reference
+./gen-query-reference
+rm gen-query-reference
