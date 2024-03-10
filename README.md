@@ -53,3 +53,18 @@ sbatch run_tests_devel_dtw dtw_test
 ### Open Issues
 1. Its a naive implementation of DTW, so we need to optimize it by using constant memory and possible tiling. 
 2. Need to create the necessary tooling for capturing it through-put
+
+
+
+## Test run Steps
+
+### Prepare for the DTW execution. 
+Before the signal alignment processing with DTW execution, we need to create the 512 random query strings and the normalized reference string. The below step will do all that.
+```
+./prepare
+```
+### Running the project N time(Eg :3 ) and print time take in seconds
+
+```
+./analyse_throughput 3
+```

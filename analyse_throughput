@@ -18,10 +18,26 @@
 #     exit 1
 # fi
 
-echo "Preparing the random query string and the normalized reference string ..."
 export LD_LIBRARY_PATH=$PWD/libwb/build/:$LD_LIBRARY_PATH
-rm -r query-string/
-rm -r reference-string/
-./build prep.cu gen-query-reference
-./gen-query-reference
-rm gen-query-reference
+
+if ! [[ "$1" =~ ^[0-9]+$ ]]; then
+  echo "Invalid number. Please give a valid number"
+  exit 1
+fi
+
+echo "Running the project $1 times..."
+./build project.cu project_build
+
+for (( i=1; i<=$1; i++ ))
+do
+    echo "Run - $i"
+    epoch_time1=$(date +%s)
+    ./project_build
+    epoch_time2=$(date +%s)
+    difference=$((epoch_time2 - epoch_time1))
+
+    echo "Time taken for run - $i in seconds - $difference"
+
+
+done
+rm project_build
