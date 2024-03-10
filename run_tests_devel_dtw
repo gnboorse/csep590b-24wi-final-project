@@ -24,7 +24,7 @@ export LD_LIBRARY_PATH=$PWD/libwb/build/:$LD_LIBRARY_PATH
 if [ "$#" -eq  1 ]; then
     SCORE=0
     TOTAL=0
-    for test in test-dtw/*; do
+    for test in test-components/test-dtw/*; do
         ((++TOTAL))
         if diff <(./$1 -e $test/output_dtw.raw -i $test/query.raw,$test/reference.raw -o $test/attempt.raw -t matrix | tail -1) <(echo The solution is correct) &>/dev/null; 
         then
@@ -39,5 +39,5 @@ if [ "$#" -eq  1 ]; then
 fi
 
 if [ "$#" -eq  2 ]; then
-    ./$1 -e test-dtw/$2/output_dtw.raw -i test-dtw/$2/query.raw,test-dtw/$2/reference.raw -o test-dtw/$2/attempt.raw -t matrix
+    ./$1 -e test-components/test-dtw/$2/output_dtw.raw -i test-components/test-dtw/$2/query.raw,test-components/test-dtw/$2/reference.raw -o test-components/test-dtw/$2/attempt.raw -t matrix
 fi

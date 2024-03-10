@@ -1,9 +1,24 @@
 # csep590b-24wi-final-project
 
-The implemntation for Normalizer and DTW are handled independently.  
-Once we complete the implementations for Normalizer & DTW, both will be added to the main file `starter.cu`.
+sDTW implementaion in AMD ROCm HIP. This repository is configured for analysing the throughput of this implementaiton in a AMD GPU. The steps for analysing the throughput is given below.
+It recommented to run it 12 times, by considering the first 2 runs as a warmup of the GPU and take the average of the throughput of the remaining 10 runs. Apart form anlalysing the throughput, we can also test each core components of this project. The explanation and the steps for testing the core components are also given below. 
 
-## Normalizer Kernel
+## Steps for analysing the throughput
+
+### Prepare for the DTW execution. 
+Before the signal alignment processing with DTW, we need to create 512 random query strings and the normalized reference string. The below `prepare` step will do all that.
+```
+./prepare
+```
+### Running the project N time(Eg :12 ) 
+Run & Print time taken by the normalization and DTW in seconds
+
+```
+./analyse_throughput 12
+```
+
+## Core components
+### Normalizer kernel
 The normalizer kernel runs in two passes:
 
 1. The first pass will calculate the sum of all elements in the input query, as well as the sum of all squared elements in the input query. 
@@ -12,59 +27,50 @@ The normalizer kernel runs in two passes:
 2. The second pass will then use the mean and variance to normalize the input query data. This pass will simply process some N number of
   values of the input query per thread and write them to the normalized output buffer.
 
-The data to normalize is generated / randomized and stored in `test-normalizer/<unix-date>/query.raw` at the beginning of the run. 
-The normalized output is stored in `normalized_query.raw` in the same directory.
-
 To build the normalizer, run: 
 ```sh
-# remove the previously-built libwb because of changes made to libwb. 
-# this is only required the first time you build the normalizer.
-rm -rf libwb/build 
-
-./build normalizer.cu normalizer
+./build test-components/normalizer.cu normalizer-test
 ```
 To run it, simply run
 ```
-./normalizer
+./project_runner normalizer-test
 ```
 The output should look something like:
 
 ```
-[student08@login1 final-project-sdtw]$ ./normalizer
-mu: 89.956, sigma: 19.6125
+Creaated 512random querys of length 2000 at test-normalizer1710049216query.raw
+Number of Queries : 512
+Size of each Querie : 2000
+mu: 88.8045, sigma: 19.1511
+...
+...
+mu: 88.171, sigma: 19.0935
+mu: 89.088, sigma: 19.1927
+mu: 88.7375, sigma: 19.1846
 normalized 2000 values
 ```
 
+The 512 data to normalize is generated / randomized and stored in the temporary folder `query-string` in the name `query.raw` 
+The normalized output is stored in `normalized_query.raw` in the same directory.
 
-## DTW Kernal
-The DTW kernal is created independently in the `dtw.cu` file and also created a dedicated test(`test-dtw`) and test runner(`run_tests_devel_dtw`) for it.
-### Testing the DTW kernal independently
+
+
+### DTW Kernal
+The DTW kernal is created independently in the `test-components/dtw.cu` file and also created a dedicated test(`test-components/test-dtw`) and test runner(`run_tests_devel_dtw`) for it.
+#### Testing the DTW kernal
 1. Build the `dtw.cu` file
 ```
-./build dtw.cu dtw_test
+./build test-components/dtw.cu dtw_test
 ```
 2. Run the tests on `dtw_test`
 ```
 sbatch run_tests_devel_dtw dtw_test
 ```
-3. The output can be seen in the slurm-xxx.out file created. Eg: `slurm-27634.out`
-4. Also the generated DTW out put metrix can be seen in each test folder. Eg : `test-dtw/0/attempt.raw ` 
-
-### Open Issues
-1. Its a naive implementation of DTW, so we need to optimize it by using constant memory and possible tiling. 
-2. Need to create the necessary tooling for capturing it through-put
-
-
-
-## Test run Steps
-
-### Prepare for the DTW execution. 
-Before the signal alignment processing with DTW execution, we need to create the 512 random query strings and the normalized reference string. The below step will do all that.
+3. The output can be seen in the slurm-xxx.out file created. Eg: `slurm-27634.out`, its content will looks like
 ```
-./prepare
+Passed test-components/test-dtw/0!
+1/1 tests passed
 ```
-### Running the project N time(Eg :3 ) and print time take in seconds
+4. Also the generated DTW out put metrix can be seen in each test folder. Eg : `test-components/test-dtw/0/attempt.raw` 
 
-```
-./analyse_throughput 3
-```
+
